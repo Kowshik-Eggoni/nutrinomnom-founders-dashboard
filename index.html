@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NutriNomNom — Brand Assessment</title>
+<style>
+  :root {
+    --green: #1A5C35;
+    --green-light: #EDF7F0;
+    --green-mid: #2E8B57;
+    --amber: #E07B00;
+    --amber-light: #FFF8E7;
+    --red: #C0392B;
+    --red-light: #FDECEA;
+    --ink: #1A1A1A;
+    --ink-muted: #555;
+    --cream: #FAFAF7;
+    --border: #E5E5E5;
+    --white: #FFFFFF;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--green);
+    color: white;
+    padding: 28px 40px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+  }
+  .site-header__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .site-header h1 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; }
+  .site-header p { font-size: 0.8rem; opacity: 0.65; margin-top: 2px; }
+  .progress-pill {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: white;
+  }
+  #progress-text { color: #6FCF97; }
+
+  /* ── TABS ── */
+  .tabs {
+    background: white;
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 82px;
+    z-index: 99;
+  }
+  .tabs__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    padding: 0 40px;
+    gap: 0;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 16px 24px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--ink-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .tab-btn:hover { color: var(--green); }
+  .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+  .tab-btn .count {
+    background: var(--green-light);
+    color: var(--green);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    margin-left: 6px;
+  }
+  .tab-btn.active .count { background: var(--green); color: white; }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 36px 40px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SECTION HEADERS ── */
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    font-size: 0.9rem;
+    color: var(--ink-muted);
+    margin-bottom: 28px;
+  }
+
+  /* ── SCORECARD GRID ── */
+  .scorecard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .score-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+  .score-card__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+  .score-card__name {
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .score-dots { display: flex; gap: 5px; margin-bottom: 10px; }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--border);
+  }
+  .dot.filled-5 { background: var(--green); }
+  .dot.filled-4 { background: var(--green-mid); }
+  .dot.filled-3 { background: var(--amber); }
+  .dot.filled-2 { background: #E05D00; }
+  .dot.filled-1 { background: var(--red); }
+  .score-card__note {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  /* ── FINDING CARDS ── */
+  .findings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+  .finding-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .finding-card__header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .finding-card__header.good { background: var(--green-light); }
+  .finding-card__header.bad { background: var(--amber-light); }
+  .finding-card__header.ugly { background: var(--red-light); }
+  .badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .badge.good { background: var(--green); color: white; }
+  .badge.bad { background: var(--amber); color: white; }
+  .badge.ugly { background: var(--red); color: white; }
+  .finding-card__title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .finding-card__body {
+    padding: 16px 20px;
+  }
+  .finding-card__body p {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    line-height: 1.65;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 4px solid var(--amber);
+    background: var(--amber-light);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    font-size: 0.92rem;
+    color: var(--ink);
+    font-style: italic;
+    line-height: 1.7;
+  }
+  .callout.green {
+    border-left-color: var(--green);
+    background: var(--green-light);
+  }
+
+  /* ── JOURNEY TABLE ── */
+  .journey-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 36px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .journey-table th {
+    padding: 14px 20px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-align: left;
+    letter-spacing: 0.04em;
+  }
+  .journey-table th.now { background: var(--red); color: white; }
+  .journey-table th.could { background: var(--green); color: white; }
+  .journey-table td {
+    padding: 14px 20px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+  }
+  .journey-table td.now { background: #FEF5F4; color: var(--ink-muted); }
+  .journey-table td.could { background: var(--green-light); color: var(--ink); }
+  .journey-table tr:last-child td { border-bottom: none; }
+
+  /* ── ACTION PLAN ── */
+  .priority-section { margin-bottom: 40px; }
+  .priority-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  .priority-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 999px;
+  }
+  .priority-tag.now { background: var(--red); color: white; }
+  .priority-tag.soon { background: var(--amber); color: white; }
+  .priority-tag.later { background: #4A90E2; color: white; }
+  .priority-tag.decide { background: var(--ink); color: white; }
+  .priority-header__title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .priority-header__sub {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    margin-left: auto;
+  }
+
+  .task-list { display: flex; flex-direction: column; gap: 10px; }
+  .task-item {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow);
+  }
+  .task-item:hover { border-color: var(--green-mid); }
+  .task-item.done {
+    background: var(--green-light);
+    border-color: var(--green);
+    opacity: 0.75;
+  }
+  .task-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: white;
+  }
+  .task-item.done .task-checkbox {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .task-checkbox svg { display: none; }
+  .task-item.done .task-checkbox svg { display: block; }
+  .task-content { flex: 1; }
+  .task-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .task-item.done .task-title {
+    text-decoration: line-through;
+    color: var(--ink-muted);
+  }
+  .task-desc {
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+  .task-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+  .task-tag.site-20g { background: #E8F5E9; color: #1A5C35; }
+  .task-tag.nnn { background: #E3F2FD; color: #1565C0; }
+  .task-tag.brand { background: #F3E5F5; color: #6A1B9A; }
+  .task-tag.both { background: #FFF3E0; color: #E65100; }
+
+  /* ── QUESTIONS PANEL ── */
+  .question-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .question-card h3 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .q-num {
+    background: var(--green);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 0.72rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .question-card p {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    line-height: 1.65;
+    margin-left: 34px;
+  }
+  .question-card .impact {
+    margin-left: 34px;
+    margin-top: 10px;
+    font-size: 0.78rem;
+    color: var(--amber);
+    font-weight: 700;
+  }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 2px solid var(--border); margin: 32px 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .container { padding: 24px 20px; }
+    .tabs__inner { padding: 0 16px; }
+    .site-header { padding: 20px; }
+    .scorecard-grid { grid-template-columns: 1fr; }
+    .findings-grid { grid-template-columns: 1fr; }
+    .tab-btn { padding: 12px 14px; font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <div>
+      <h1>NutriNomNom — Brand &amp; Experience Assessment</h1>
+      <p>CXO-level review · April 2026 · nutrinomnom.com + 20g.nutrinomnom.com + Design Guide</p>
+    </div>
+    <div class="progress-pill">Tasks: <span id="progress-text">0 / 20</span> done</div>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tabs__inner">
+    <button class="tab-btn active" onclick="showTab('findings')">📋 What We Found</button>
+    <button class="tab-btn" onclick="showTab('actions')">✅ Action Plan <span class="count" id="actions-count">20</span></button>
+    <button class="tab-btn" onclick="showTab('questions')">🤔 Decisions to Make <span class="count">5</span></button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- TAB 1: FINDINGS                                                    -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div id="tab-findings" class="tab-panel active">
+<div class="container">
+
+  <div class="section-label">The Big Picture</div>
+  <div class="section-title">Overall Scorecard</div>
+  <div class="section-sub">Scores out of 5, across both properties and the design guide</div>
+
+  <div class="scorecard-grid">
+    <!-- 20g cards -->
+    <div class="score-card">
+      <div class="score-card__label">20g.nutrinomnom.com</div>
+      <div class="score-card__name">Brand Narrative</div>
+      <div class="score-dots">
+        <div class="dot filled-5"></div><div class="dot filled-5"></div><div class="dot filled-5"></div><div class="dot filled-5"></div><div class="dot filled-5"></div>
+      </div>
+      <div class="score-card__note">Your strongest asset. "No new habits" is a genuine insight. The protein gap framing is textbook D2C done right.</div>
+    </div>
+    <div class="score-card">
+      <div class="score-card__label">20g.nutrinomnom.com</div>
+      <div class="score-card__name">Visual Design</div>
+      <div class="score-dots">
+        <div class="dot filled-3"></div><div class="dot filled-3"></div><div class="dot filled-3"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="score-card__note">Clean and functional, but not memorable. Nothing visually distinctive. Doesn't match the playful NutriNomNom brand guide palette at all.</div>
+    </div>
+    <div class="score-card">
+      <div class="score-card__label">20g.nutrinomnom.com</div>
+      <div class="score-card__name">Conversion Setup</div>
+      <div class="score-dots">
+        <div class="dot filled-3"></div><div class="dot filled-3"></div><div class="dot filled-3"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="score-card__note">Good first-order flow. Zero repeat-purchase architecture — no subscribe-and-save, no bundles, no re-order nudge.</div>
+    </div>
+    <div class="score-card">
+      <div class="score-card__label">20g.nutrinomnom.com</div>
+      <div class="score-card__name">Trust &amp; Credibility</div>
+      <div class="score-dots">
+        <div class="dot filled-3"></div><div class="dot filled-3"></div><div class="dot filled-3"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="score-card__note">Ingredient transparency is great. But no FSSAI number visible, no lab certificate link, and testimonials feel thin.</div>
+    </div>
+    <!-- NNN cards -->
+    <div class="score-card">
+      <div class="score-card__label">nutrinomnom.com</div>
+      <div class="score-card__name">Brand Expression</div>
+      <div class="score-dots">
+        <div class="dot filled-1"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="score-card__note">Effectively invisible. Looks like a free WordPress template. The NutriNomNom mascot logo doesn't even appear on this site.</div>
+    </div>
+    <div class="score-card">
+      <div class="score-card__label">nutrinomnom.com</div>
+      <div class="score-card__name">Conversion Flow</div>
+      <div class="score-dots">
+        <div class="dot filled-2"></div><div class="dot filled-2"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="score-card__note">WhatsApp-only funnel blocks all cold traffic entirely. Someone landing from Instagram at 11pm cannot subscribe. By morning the moment is gone.</div>
+    </div>
+    <div class="score-card">
+      <div class="score-card__label">nutrinomnom.com</div>
+      <div class="score-card__name">Customer Proof</div>
+      <div class="score-dots">
+        <div class="dot filled-3"></div><div class="dot filled-3"></div><div class="dot filled-3"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="score-card__note">The testimonials here are actually excellent — specific, honest, real names. Totally underutilised given the weak design around them.</div>
+    </div>
+    <!-- Cross-brand + guide -->
+    <div class="score-card">
+      <div class="score-card__label">Cross-Brand</div>
+      <div class="score-card__name">Coherence</div>
+      <div class="score-dots">
+        <div class="dot filled-1"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="score-card__note">The two properties don't acknowledge each other's existence anywhere. A meal sub customer in Hyderabad never discovers 20g. This is your biggest missed opportunity.</div>
+    </div>
+    <div class="score-card">
+      <div class="score-card__label">Design Guide</div>
+      <div class="score-card__name">As a Usable System</div>
+      <div class="score-dots">
+        <div class="dot filled-1"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="score-card__note">It's a one-page Canva moodboard note. Shows colors and fonts. No brand voice, no logo rules, no application guidelines. Not a usable system yet.</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    💡 <strong>The headline:</strong> You have two businesses operating as strangers inside the same family name. The 20g brand story is strong enough to build a serious company on. The work now is to connect everything around it.
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- 20g FINDINGS -->
+  <div class="section-label">20g.nutrinomnom.com — Shelf-Stable Products</div>
+  <div class="section-title">What's Working, What Isn't</div>
+  <div class="section-sub">Pan-India D2C · Shopify Hydrogen · 3 products at ₹399/250g</div>
+
+  <div class="findings-grid">
+    <div class="finding-card">
+      <div class="finding-card__header good">
+        <span class="badge good">The Good</span>
+        <span class="finding-card__title">"No new habits" positioning</span>
+      </div>
+      <div class="finding-card__body"><p>You're not asking someone to change their life — you're telling them their existing life can do more. That's a fundamentally easier sell than any supplement brand. The protein gap framing (35g actual vs. 60g needed) creates the problem before introducing the solution. Textbook.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header good">
+        <span class="badge good">The Good</span>
+        <span class="finding-card__title">The Math comparison section</span>
+      </div>
+      <div class="finding-card__body"><p>₹64/serving podi vs. ₹120/serving whey protein is one of the most effective value-justification tools at this stage. It answers the price objection before the customer can even form it.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header good">
+        <span class="badge good">The Good</span>
+        <span class="finding-card__title">Ingredient transparency</span>
+      </div>
+      <div class="finding-card__body"><p>Showing exact percentages (Defatted Peanut Flour 47%, Whey 21%) is a genuine differentiator. Most brands hide behind "natural flavours." You're showing everything. That builds real trust with health-conscious buyers.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header good">
+        <span class="badge good">The Good</span>
+        <span class="finding-card__title">Founder's story is honest</span>
+      </div>
+      <div class="finding-card__body"><p>"I was buying protein powder and hating every sip. Then I realised — I eat podi rice pretty much every day." That's real. It works because it's specific and it doesn't try too hard. Keep this energy across everything you write.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header bad">
+        <span class="badge bad">The Bad</span>
+        <span class="finding-card__title">"Hyderabad" in the hero</span>
+      </div>
+      <div class="finding-card__body"><p>The hero eyebrow reads "🌱 By NutriNomNom · Hyderabad" — but you ship pan-India. The moment someone in Pune or Delhi sees "Hyderabad," a small subconscious friction is created. Is this local? Will it ship here? Move the Hyderabad mention to the story section where it's an authenticity marker, not a geographic limiter.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header bad">
+        <span class="badge bad">The Bad</span>
+        <span class="finding-card__title">₹349 vs. ₹399 inconsistency</span>
+      </div>
+      <div class="finding-card__body"><p>The bottom CTA section says "Try any 20g product for ₹349" but every product is priced at ₹399. Which is it? This small inconsistency creates a real moment of distrust at the most critical point — just before someone decides to buy.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header bad">
+        <span class="badge bad">The Bad</span>
+        <span class="finding-card__title">No subscribe-and-save</span>
+      </div>
+      <div class="finding-card__body"><p>You're selling a daily consumable. Someone eating podi every day finishes 250g in under 2 weeks. Yet the entire site is optimised for a first order, with zero repeat-purchase architecture. No subscription toggle, no bundle discount, no re-order nudge. This is significant missed LTV.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header bad">
+        <span class="badge bad">The Bad</span>
+        <span class="finding-card__title">Thin social proof</span>
+      </div>
+      <div class="finding-card__body"><p>Three testimonials with initial-letter avatars, from three different cities, with perfectly smooth copy — they're not obviously fake, but they don't feel obviously real. No review count, no star aggregate, no UGC, no "x happy customers" number. For a food product, proof needs to work harder.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header ugly">
+        <span class="badge ugly">The Ugly</span>
+        <span class="finding-card__title">Free shipping threshold kills trial</span>
+      </div>
+      <div class="finding-card__body"><p>Free shipping above ₹999 means a single-product first-time buyer at ₹399 pays for shipping. To qualify, they need to buy 2.5 units. That's a huge ask from someone who hasn't tasted the product yet. Most early-stage D2C brands offer free shipping on first orders or set a ₹499 threshold.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header ugly">
+        <span class="badge ugly">The Ugly</span>
+        <span class="finding-card__title">No FSSAI number visible</span>
+      </div>
+      <div class="finding-card__body"><p>The trust strip says "Lab Tested" but there's no certificate link. FSSAI number is not shown anywhere on the site. For health-conscious urban buyers who read labels, this is a trust gap. It signals you might have something to hide — even if you don't.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header ugly">
+        <span class="badge ugly">The Ugly</span>
+        <span class="finding-card__title">Zero connection to the parent brand</span>
+      </div>
+      <div class="finding-card__body"><p>A Hyderabad customer finishes their podi, loves the brand, and goes back to the site. There's no link to the meal subscription. No "Also, we cook fresh meals in Hyderabad." No cross-pollination at all. Every day without this is a high-LTV customer you're leaving on the table.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header ugly">
+        <span class="badge ugly">The Ugly</span>
+        <span class="finding-card__title">"Coming Soon" bar weakens the catalog</span>
+      </div>
+      <div class="finding-card__body"><p>The greyed-out Protein Bar tile in the hero creates curiosity, yes — but for a new visitor who's never heard of you, it also signals "small startup, still figuring things out." Consider removing it or replacing it with a proper waitlist CTA so you're capturing intent instead of just showing a gap.</p></div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- NNN.COM FINDINGS -->
+  <div class="section-label">nutrinomnom.com — Meal Subscriptions</div>
+  <div class="section-title">What's Working, What Isn't</div>
+  <div class="section-sub">Hyderabad-only · WordPress · WhatsApp-first conversion · ₹1565–₹25,000/plan</div>
+
+  <div class="findings-grid">
+    <div class="finding-card">
+      <div class="finding-card__header good">
+        <span class="badge good">The Good</span>
+        <span class="finding-card__title">Customer love is genuinely real</span>
+      </div>
+      <div class="finding-card__body"><p>The testimonials here are some of the most credible on any early-stage site: full names, specific details ("4 kg while going to the gym daily"), and honest mixed feedback ("one curry with a sour taste"). That honesty is rare and builds more trust than polished five-star quotes.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header good">
+        <span class="badge good">The Good</span>
+        <span class="finding-card__title">RDA methodology is a real differentiator</span>
+      </div>
+      <div class="finding-card__body"><p>Most meal delivery says "healthy." You say: we use Recommended Dietary Allowance methodology, gather your biometrics, balance macros and micros. That's a real scientific process that separates you from a tiffin service. It deserves to be front and center, not buried in a paragraph.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header bad">
+        <span class="badge bad">The Bad</span>
+        <span class="finding-card__title">Premium service, template website</span>
+      </div>
+      <div class="finding-card__body"><p>At ₹12,500/month for the full plan, you're selling a premium product. Your customer is comparing you against a cook, a restaurant, and cooking themselves. The website looks like a default WordPress blog. There is zero visual expression of the care, freshness, and expertise that the copy describes.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header bad">
+        <span class="badge bad">The Bad</span>
+        <span class="finding-card__title">Confusing pricing display</span>
+      </div>
+      <div class="finding-card__body"><p>Pricing shows two numbers per plan (e.g., ₹1565 / ₹3130 for 1 week of lunch). It's never explained what the higher number means. If that's a 50% discount, shout it loudly. If it's not a real discount, remove the second number. Ambiguity here creates doubt right at the decision moment.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header ugly">
+        <span class="badge ugly">The Ugly</span>
+        <span class="finding-card__title">WhatsApp-only blocks cold traffic</span>
+      </div>
+      <div class="finding-card__body"><p>WhatsApp works for warm referrals. But for someone discovering you via Google or Instagram at 11pm, a WhatsApp CTA is a conversion wall. People don't want to initiate a conversation to buy something. They want to see a price, click, and pay. Every inbound visitor who doesn't send that WhatsApp message is a lost customer.</p></div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-card__header ugly">
+        <span class="badge ugly">The Ugly</span>
+        <span class="finding-card__title">Indistinguishable from a tiffin service</span>
+      </div>
+      <div class="finding-card__body"><p>Cover the logo and show this website to 20 people. Zero would identify it as a premium, science-backed nutrition service. The NutriNomNom personality, the warmth, the food-as-care philosophy — all absent from the design. The mascot logo doesn't even appear on this site.</p></div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- CROSS-BRAND JOURNEY -->
+  <div class="section-label">The Cross-Brand Problem</div>
+  <div class="section-title">Today vs. What Could Be</div>
+  <div class="section-sub">Two products that are natural complements — operating as total strangers</div>
+
+  <table class="journey-table">
+    <tr>
+      <th class="now">🔴 Today (Siloed)</th>
+      <th class="could">🟢 With Simple Connections in Place</th>
+    </tr>
+    <tr>
+      <td class="now">Customer discovers 20g on Instagram. Buys podi, loves it. Finishes the jar. Re-orders. <strong>Never discovers the meal subscription.</strong></td>
+      <td class="could">Customer buys podi. Post-purchase email says "Hey Hyderabad? We also cook for you every day." They try the meal sub. <strong>LTV doubles.</strong></td>
+    </tr>
+    <tr>
+      <td class="now">Meal sub customer travels for work. Breaks nutrition habits. Back to square one. <strong>Never discovers 20g shelf-stable products.</strong></td>
+      <td class="could">NutriNomNom.com says "Traveling? Take protein podi with you." They buy a jar. <strong>Nutrition stays consistent. New product line discovered.</strong></td>
+    </tr>
+    <tr>
+      <td class="now">Brand has a playful candy-colored design guide. Neither website uses those colors. <strong>Three separate visual identities with no governance.</strong></td>
+      <td class="could">A real brand guide governs both properties. The NutriNomNom mascot appears on both. Colors, tone, and voice are consistent. <strong>Feels like one company.</strong></td>
+    </tr>
+  </table>
+
+  <div class="callout green">
+    🌱 The shelf-stable product is for when you <em>can't</em> have fresh meals. The meal subscription is for when you want someone to <em>do it all</em>. Together they're a complete nutrition solution. Right now they're operating in separate universes.
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- TAB 2: ACTION PLAN                                                 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div id="tab-actions" class="tab-panel">
+<div class="container">
+
+  <div class="section-label">Your Action Plan</div>
+  <div class="section-title">Tasks — Prioritized by Impact</div>
+  <div class="section-sub">Click any task to mark it done. Your progress is saved automatically.</div>
+
+  <!-- PRIORITY 1: THIS WEEK -->
+  <div class="priority-section">
+    <div class="priority-header">
+      <span class="priority-tag now">🔴 This Week</span>
+      <span class="priority-header__title">Quick fixes — each under an hour</span>
+      <span class="priority-header__sub">5 tasks</span>
+    </div>
+    <div class="task-list">
+      <div class="task-item" id="t1" onclick="toggleTask('t1')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Remove "Hyderabad" from the 20g hero eyebrow</div>
+          <div class="task-desc">Change "🌱 By NutriNomNom · Hyderabad" to something pan-India like "Made in India · Ships Everywhere." This is a 5-minute Shopify edit that stops geographically anchoring a national product.</div>
+        </div>
+        <span class="task-tag site-20g">20g site</span>
+      </div>
+      <div class="task-item" id="t2" onclick="toggleTask('t2')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Fix the ₹349 vs. ₹399 price inconsistency</div>
+          <div class="task-desc">The bottom CTA says ₹349 but products are ₹399. Find the right number and make every single page consistent. This is an active trust-killer right before checkout.</div>
+        </div>
+        <span class="task-tag site-20g">20g site</span>
+      </div>
+      <div class="task-item" id="t3" onclick="toggleTask('t3')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Add FSSAI number to the 20g site footer</div>
+          <div class="task-desc">Put your FSSAI registration number in the footer or on product pages. Health-conscious urban buyers look for this. Its absence signals either oversight or something to hide — even when it's neither.</div>
+        </div>
+        <span class="task-tag site-20g">20g site</span>
+      </div>
+      <div class="task-item" id="t4" onclick="toggleTask('t4')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Add cross-links between the two sites</div>
+          <div class="task-desc">Add a small footer section on 20g: "In Hyderabad? We cook fresh meals too → nutrinomnom.com." Add the reverse on nutrinomnom.com: "Traveling or want shelf-stable protein? Try 20g →". This costs 30 minutes and recovers real missed LTV.</div>
+        </div>
+        <span class="task-tag both">Both sites</span>
+      </div>
+      <div class="task-item" id="t5" onclick="toggleTask('t5')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Clarify or remove the "Coming Soon" protein bar tile</div>
+          <div class="task-desc">Either replace it with a proper waitlist email capture ("Notify me when it launches →") so you're building a list, or remove it entirely. Showing a greyed-out placeholder to first-time visitors signals an incomplete catalogue.</div>
+        </div>
+        <span class="task-tag site-20g">20g site</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIORITY 2: NEXT 2-4 WEEKS -->
+  <div class="priority-section">
+    <div class="priority-header">
+      <span class="priority-tag soon">🟡 Next 2–4 Weeks</span>
+      <span class="priority-header__title">High-impact changes — need a bit of planning</span>
+      <span class="priority-header__sub">8 tasks</span>
+    </div>
+    <div class="task-list">
+      <div class="task-item" id="t6" onclick="toggleTask('t6')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Add a subscribe-and-save option on 20g</div>
+          <div class="task-desc">Even a simple "Subscribe and save 10%" toggle on product pages can significantly lift LTV. You're selling a daily consumable with a natural reorder cycle — right now you're leaving all of that on the table. Shopify has native subscription apps (Recharge, Skio) that take a few days to set up.</div>
+        </div>
+        <span class="task-tag site-20g">20g site</span>
+      </div>
+      <div class="task-item" id="t7" onclick="toggleTask('t7')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Lower or waive free shipping on first orders</div>
+          <div class="task-desc">The ₹999 threshold requires buying 2.5 units just to get free shipping. A first-time buyer at ₹399 pays for shipping — which is a real conversion barrier for a product they haven't tasted yet. Offer free shipping on first orders or drop the threshold to ₹499 for a few months and measure conversion rate change.</div>
+        </div>
+        <span class="task-tag site-20g">20g site</span>
+      </div>
+      <div class="task-item" id="t8" onclick="toggleTask('t8')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Strengthen social proof on the 20g site</div>
+          <div class="task-desc">Ask real customers for photos with their podi rice plates. Add a Shopify review app (Stamped, Okendo, or even the free one) so reviews show stars and a count. Even a couple of WhatsApp screenshot testimonials (with permission) beat three anonymous text blocks.</div>
+        </div>
+        <span class="task-tag site-20g">20g site</span>
+      </div>
+      <div class="task-item" id="t9" onclick="toggleTask('t9')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Create an online interest/inquiry form for nutrinomnom.com</div>
+          <div class="task-desc">Build a simple Typeform or Google Form embedded on the site: name, email, dietary goals, area in Hyderabad. Let people submit interest without having to WhatsApp you first. You follow up on WhatsApp from your side — much lower friction for the customer, same personal touch for you.</div>
+        </div>
+        <span class="task-tag nnn">NNN site</span>
+      </div>
+      <div class="task-item" id="t10" onclick="toggleTask('t10')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Set up a post-purchase email flow for 20g</div>
+          <div class="task-desc">At minimum: (1) order confirmation with excitement + what to expect, (2) 3 days after delivery: "How's the podi?" with a review ask, (3) 10 days after: reorder nudge with a small incentive, (4) Hyderabad-specific customers: "Did you know we cook fresh meals too?" This is automated LTV on autopilot.</div>
+        </div>
+        <span class="task-tag site-20g">20g site</span>
+      </div>
+      <div class="task-item" id="t11" onclick="toggleTask('t11')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Fix the pricing table confusion on nutrinomnom.com</div>
+          <div class="task-desc">Each plan shows two prices (e.g., ₹1565 / ₹3130). Explain clearly what both numbers mean — or remove the second number entirely. If there's a genuine 50% discount happening, make it a visible "50% off" callout, not a silent number next to another number.</div>
+        </div>
+        <span class="task-tag nnn">NNN site</span>
+      </div>
+      <div class="task-item" id="t12" onclick="toggleTask('t12')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Move the RDA methodology higher on nutrinomnom.com</div>
+          <div class="task-desc">This is your biggest differentiator from every other tiffin service. Right now it's buried in a paragraph. It should be a visual callout near the top: "We don't cook the same meal for everyone. We calculate your exact macros using Recommended Dietary Allowance science." Make it feel like a feature, not a footnote.</div>
+        </div>
+        <span class="task-tag nnn">NNN site</span>
+      </div>
+      <div class="task-item" id="t13" onclick="toggleTask('t13')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Start collecting UGC from both customer bases</div>
+          <div class="task-desc">Ask 20g customers to share their podi rice plates on Instagram and tag you. Ask meal sub customers to share their lunch. Offer a small incentive (10% off next order). This content is your best acquisition asset and costs almost nothing. Even 10 real photos transforms how both sites feel.</div>
+        </div>
+        <span class="task-tag both">Both sites</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIORITY 3: 1-3 MONTHS -->
+  <div class="priority-section">
+    <div class="priority-header">
+      <span class="priority-tag later">🔵 Next 1–3 Months</span>
+      <span class="priority-header__title">Structural work — needs real investment of time or money</span>
+      <span class="priority-header__sub">7 tasks</span>
+    </div>
+    <div class="task-list">
+      <div class="task-item" id="t14" onclick="toggleTask('t14')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Build a real brand guide</div>
+          <div class="task-desc">The current design guide is a one-pager. A real guide needs: (1) brand voice — how you write, what words you use, what you never say, (2) color system with application rules for digital, print, packaging, (3) logo usage for both NutriNomNom and 20g and when each applies, (4) photography style — what photos look like, what they never look like, (5) who the customer is and what they care about. Budget properly for this — a good brand designer can do this in 2–3 weeks.</div>
+        </div>
+        <span class="task-tag brand">Brand</span>
+      </div>
+      <div class="task-item" id="t15" onclick="toggleTask('t15')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Decide the sub-brand architecture</div>
+          <div class="task-desc">Is "20g" a product line of NutriNomNom, or a distinct sub-brand that's "by NutriNomNom"? Right now it's somewhere in between. This decision shapes everything: how you advertise, how you build community, how you introduce new products, whether the mascot appears on 20g packaging, everything. Make this call deliberately — don't let it stay ambiguous.</div>
+        </div>
+        <span class="task-tag brand">Brand</span>
+      </div>
+      <div class="task-item" id="t16" onclick="toggleTask('t16')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Rebuild nutrinomnom.com visually</div>
+          <div class="task-desc">It doesn't need to be complex. But it must feel premium — white space, real food photography, visible brand elements, and a clear hierarchy that leads with emotion before methodology. You're asking someone to trust you with their daily nutrition at ₹12,500/month. The site needs to feel like that relationship deserves.</div>
+        </div>
+        <span class="task-tag nnn">NNN site</span>
+      </div>
+      <div class="task-item" id="t17" onclick="toggleTask('t17')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Add a real online checkout to nutrinomnom.com</div>
+          <div class="task-desc">At minimum, a plan selection page where someone can choose their plan, enter their details, and pay online — even if you follow up via WhatsApp for customization. Every week without this is a week of conversion loss from inbound traffic who will never send that first WhatsApp message.</div>
+        </div>
+        <span class="task-tag nnn">NNN site</span>
+      </div>
+      <div class="task-item" id="t18" onclick="toggleTask('t18')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Commission real lifestyle photography</div>
+          <div class="task-desc">For 20g: podi rice plates, oatmeal bowls, the jar in a lunchbox, someone adding podi to their curd rice. For NNN: fresh meals being packed, someone eating happily at a desk. Product renders are placeholders, not brand builders. Real photos of real food convert better and feel more honest. This can be done in one afternoon with a food photographer.</div>
+        </div>
+        <span class="task-tag both">Both sites</span>
+      </div>
+      <div class="task-item" id="t19" onclick="toggleTask('t19')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Create a "NutriNomNom Starter Kit" bundle</div>
+          <div class="task-desc">A 1-month meal subscription trial + a jar of protein podi for travel days. This bridges the two products into a single purchase, creates a high-AOV first order, and tells the complete brand story in one box. It also gives you a compelling gifting product — someone gifting a health subscription + travel-friendly protein to a friend.</div>
+        </div>
+        <span class="task-tag both">Both sites</span>
+      </div>
+      <div class="task-item" id="t20" onclick="toggleTask('t20')">
+        <div class="task-checkbox"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="task-content">
+          <div class="task-title">Link a real lab test report to the "Lab Tested" trust badge</div>
+          <div class="task-desc">The trust strip on 20g says "Lab Tested" — link it to the actual certificate or at minimum a page explaining what was tested and by whom. Health-conscious buyers in 2026 click these things. The absence of a link makes the badge feel decorative rather than substantive.</div>
+        </div>
+        <span class="task-tag site-20g">20g site</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- TAB 3: DECISIONS TO MAKE                                          -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div id="tab-questions" class="tab-panel">
+<div class="container">
+
+  <div class="section-label">Decisions Only You Can Make</div>
+  <div class="section-title">Strategic Questions</div>
+  <div class="section-sub">These aren't action items — they're forks in the road. Each one shapes what gets built next.</div>
+
+  <div class="callout">
+    ⚠️ These questions don't need to be answered today, but they need to be answered <em>deliberately</em>. Letting them stay ambiguous means the brand drifts rather than grows.
+  </div>
+
+  <div class="question-card">
+    <h3><span class="q-num">1</span> Is NutriNomNom expanding the meal subscription beyond Hyderabad?</h3>
+    <p>If yes: the nutrinomnom.com site needs to change now — city selector, delivery zone map, waitlist for other cities. If no: that's a valid choice, but lean into Hyderabad hard. Make it a hyperlocal brand that dominates one city before replicating the model. The current site doesn't reflect either decision — it's neither pan-India-ready nor hyper-Hyderabad.</p>
+    <div class="impact">📍 Shapes: Site architecture, marketing budget, ops capacity, brand messaging</div>
+  </div>
+
+  <div class="question-card">
+    <h3><span class="q-num">2</span> What is the role of the NutriNomNom mascot and the candy-color palette?</h3>
+    <p>The design guide shows a playful, bright, mascot-driven brand. But 20g is clean, structured, and data-driven. These are two different brand personalities. The mascot suggests broad consumer appeal — families, kids, supermarket shelves. Is that the direction? Or is 20g the future and NutriNomNom becomes the holding company brand that stays behind the scenes? You can't be both simultaneously without confusing the market.</p>
+    <div class="impact">📍 Shapes: Brand guide, packaging design, social media tone, target audience</div>
+  </div>
+
+  <div class="question-card">
+    <h3><span class="q-num">3</span> Who exactly is the 20g customer at 10x scale?</h3>
+    <p>Right now the site speaks to health-aware urban millennials (25–35) who already know they need more protein. That's a well-defined, educated early adopter. But is that the segment to go deep on, or is there a broader play — homemakers who want to quietly upgrade their family's nutrition, older adults managing health conditions, office cafeterias? The "no new habits" positioning works for all of them, but the creative execution needs to pick one to start.</p>
+    <div class="impact">📍 Shapes: Ad targeting, content strategy, product development roadmap, distribution channels</div>
+  </div>
+
+  <div class="question-card">
+    <h3><span class="q-num">4</span> Is "20g" a product line or a standalone brand?</h3>
+    <p>Currently it's presented as "20g by NutriNomNom" — a sub-brand. But the 20g domain, the separate site, the distinct visual identity, and the pan-India ambition all feel more like a standalone brand that happens to share a founding story. This matters for: investor conversations (what are you building?), retailer conversations (which brand goes on shelf?), and customer conversations (which name do they remember?). Make this call deliberately.</p>
+    <div class="impact">📍 Shapes: Brand architecture, packaging, retailer/investor pitch, long-term product strategy</div>
+  </div>
+
+  <div class="question-card">
+    <h3><span class="q-num">5</span> When does nutrinomnom.com get a real checkout?</h3>
+    <p>This is framed as a question because it's really a resource prioritization call. Building a proper subscription checkout is 2–4 weeks of developer work. Is that the right use of time right now vs. growing the 20g D2C channel, or adding a new meal sub city, or hiring a chef? There's no wrong answer — but the longer you go without it, the more inbound traffic you're losing silently. Set a date for when this happens.</p>
+    <div class="impact">📍 Shapes: Conversion rate, ops workflow, scalability of the meal subscription business</div>
+  </div>
+
+</div>
+</div>
+
+<script>
+  // ── TASK PERSISTENCE ──────────────────────────────────────────────
+  const STORAGE_KEY = 'nutrinomnom_tasks_v1';
+  const TOTAL = 20;
+
+  function loadTasks() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch(e) { return {}; }
+  }
+
+  function saveTasks(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function toggleTask(id) {
+    const state = loadTasks();
+    state[id] = !state[id];
+    saveTasks(state);
+    renderTask(id, state[id]);
+    updateProgress();
+  }
+
+  function renderTask(id, done) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (done) el.classList.add('done');
+    else el.classList.remove('done');
+  }
+
+  function updateProgress() {
+    const state = loadTasks();
+    const done = Object.values(state).filter(Boolean).length;
+    const remaining = TOTAL - done;
+    document.getElementById('progress-text').textContent = done + ' / ' + TOTAL;
+    document.getElementById('actions-count').textContent = remaining;
+    if (done === TOTAL) {
+      document.getElementById('progress-text').style.color = '#6FCF97';
+    }
+  }
+
+  function initTasks() {
+    const state = loadTasks();
+    for (let i = 1; i <= TOTAL; i++) {
+      renderTask('t' + i, state['t' + i]);
+    }
+    updateProgress();
+  }
+
+  // ── TABS ──────────────────────────────────────────────────────────
+  function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', initTasks);
+</script>
+
+</body>
+</html>
