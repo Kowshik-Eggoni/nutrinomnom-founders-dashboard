@@ -1029,4 +1029,47 @@
     document.getElementById('progress-text').textContent = done + ' / ' + TOTAL;
     document.getElementById('actions-count').textContent = remaining;
     if (done === TOTAL) {
-      document.getE
+      document.getElementById('progress-text').textContent = 'All ' + TOTAL + ' done 🎉';
+    }
+  }
+
+  // ── TAB SWITCHING ────────────────────────────────────────────────
+  function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('tab-' + name);
+    if (panel) panel.classList.add('active');
+    const btn = document.querySelector('.tab-btn[onclick*="\'' + name + '\'"]');
+    if (btn) btn.classList.add('active');
+  }
+
+  // ── SHAREABLE LINK ───────────────────────────────────────────────
+  function copyShareableLink() {
+    const url = window.location.href;
+    const btn = document.getElementById('copy-link-btn');
+    const original = btn.textContent;
+    const restore = () => { btn.textContent = original; };
+    const ok = () => { btn.textContent = '✓ Link copied'; setTimeout(restore, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(ok).catch(() => {
+        btn.textContent = '⚠ Copy failed'; setTimeout(restore, 1800);
+      });
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = url; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); ok(); } catch(e) { btn.textContent = '⚠ Copy failed'; setTimeout(restore, 1800); }
+      document.body.removeChild(ta);
+    }
+  }
+
+  function updateCopyBtn() { /* no-op: link always reflects current hash */ }
+
+  // ── BOOTSTRAP ────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    const state = loadTasks();
+    Object.entries(state).forEach(([id, done]) => renderTask(id, done));
+    updateProgress();
+  });
+</script>
+</body>
+</html>
