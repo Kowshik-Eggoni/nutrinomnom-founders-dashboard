@@ -438,7 +438,10 @@
       <h1>NutriNomNom — Brand &amp; Experience Assessment</h1>
       <p>CXO-level review · April 2026 · nutrinomnom.com + 20g.nutrinomnom.com + Design Guide</p>
     </div>
-    <div class="progress-pill">Tasks: <span id="progress-text">0 / 20</span> done</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div class="progress-pill">Tasks: <span id="progress-text">0 / 20</span> done</div>
+      <button id="copy-link-btn" onclick="copyShareableLink()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:6px 16px;font-size:0.75rem;font-weight:700;color:white;cursor:pointer;">🔗 Copy shareable link</button>
+    </div>
   </div>
 </header>
 
@@ -975,17 +978,33 @@
 </div>
 
 <script>
-  // ── TASK PERSISTENCE ──────────────────────────────────────────────
+  // ── TASK PERSISTENCE (URL hash = shareable state) ─────────────────
   const STORAGE_KEY = 'nutrinomnom_tasks_v1';
   const TOTAL = 20;
 
   function loadTasks() {
+    // 1. Try URL hash first (shared state)
+    const hash = window.location.hash.replace('#','');
+    const match = hash.match(/t=([0-9,]*)/);
+    if (match && match[1]) {
+      const done = match[1].split(',').filter(Boolean);
+      const state = {};
+      done.forEach(n => { state['t' + n] = true; });
+      return state;
+    }
+    // 2. Fallback to localStorage (same device, no hash)
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
     catch(e) { return {}; }
   }
 
   function saveTasks(state) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    // Save to localStorage
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+    // Update URL hash (keeps page position, no reload)
+    const done = Object.entries(state).filter(([,v]) => v).map(([k]) => k.replace('t','')).join(',');
+    const newHash = done ? 't=' + done : ' ';
+    history.replaceState(null, '', '#' + newHash.trim());
+    updateCopyBtn();
   }
 
   function toggleTask(id) {
@@ -1010,29 +1029,4 @@
     document.getElementById('progress-text').textContent = done + ' / ' + TOTAL;
     document.getElementById('actions-count').textContent = remaining;
     if (done === TOTAL) {
-      document.getElementById('progress-text').style.color = '#6FCF97';
-    }
-  }
-
-  function initTasks() {
-    const state = loadTasks();
-    for (let i = 1; i <= TOTAL; i++) {
-      renderTask('t' + i, state['t' + i]);
-    }
-    updateProgress();
-  }
-
-  // ── TABS ──────────────────────────────────────────────────────────
-  function showTab(name) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    event.currentTarget.classList.add('active');
-  }
-
-  // ── INIT ──────────────────────────────────────────────────────────
-  document.addEventListener('DOMContentLoaded', initTasks);
-</script>
-
-</body>
-</html>
+      document.getE
